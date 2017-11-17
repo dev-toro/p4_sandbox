@@ -17,7 +17,7 @@ String[] people = {
 };
 
 // Size of each group
-int _size = 2;
+int _size = 3;
 
 void setup() {
 
