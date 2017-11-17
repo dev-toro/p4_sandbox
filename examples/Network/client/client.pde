@@ -4,7 +4,10 @@ Client myClient;
 int dataIn; 
 int timeOut;
 String inString;
-String clientID = "juniper";
+
+String id = "juniper";
+int a, b, c;
+String _id, _a, _b, _c;
 
 void setup() { 
   size(400, 200); 
@@ -16,34 +19,56 @@ void setup() {
 
 void draw() { 
   background(0); 
+
+  receiveData();
+  writeToServer();
+  paintDataInCanvas();
+  
+}
+
+void receiveData() {
   if (myClient.available() > 0) {     
+
+    // -----------------------------------------
+    // -------- Receive Data from Server -------
+    // -----------------------------------------
 
     try {
       inString = myClient.readString();
       inString = inString.substring(0, inString.indexOf("#"));  // Only up to the newline
       String[] data = split(inString, '/');
       // Print incomming message from server
-      text("@" + data[0] + " says: " + "a: " + data[1] + " b: " + data[2] + " c: " + data[3], 20, height/2);
+      _id = data[0];
+      _a = data[1];
+      _b = data[2];
+      _c = data[3];
     }
     catch(Exception e) {
       println(e);
     }
   }
-  
-  // Send an update to the server periodically
-  writeToServer();
-  
 }
 
 void writeToServer() {
   if (timeOut < 500) {
     timeOut++;
-  }else{
+  } else {
     println("sending...");
-    // -------------------------
-    // -------- Send Data ------
-    // -------------------------
-    myClient.write(clientID + "/" + int(random(100)) + "/" + int(random(100)) + "/" + int(random(100)) + "#");
+    // -----------------------------------
+    // -------- Send Data to Server ------
+    // -----------------------------------
+    a = int(random(100));
+    b = int(random(100));
+    c = int(random(100));
+    myClient.write(id + "/" + a + "/" + b + "/" + c + "#");
     timeOut = 0;
+  }
+}
+
+void paintDataInCanvas() {
+  // Print broadcast message in the screen
+  text("---> IN FROM @" + _id + " says: " + "a: " + _a + " b: " + _b + " c: " + _c, 20, height/2);
+  if (a != 0) {
+    text("<--- OUT: " + "a: " + a + " b: " + b + " c: " + c, 20, (height/2)+20);
   }
 }

@@ -7,6 +7,12 @@ Client myClient;
 int a, b, c;
 String _id, _a, _b, _c;
 
+// ------ PROTOCOL -----
+// Three variables: a, b, c
+// Identifier: server
+// End of the message: #
+// example: server/3/400/122#
+
 void setup() {
   size(400, 200);
   // Starts a myServer on port 5204
@@ -20,19 +26,34 @@ void setup() {
 void draw() {
   background(0);
 
+  broadcastData();
+  receiveData();
+  paintDataInCanvas();
+  
+}
+
+void paintDataInCanvas() {
+  // Print broadcast message in the screen
+  text("< --- BROADCAST: " + "a: " + a + " b: " + b + " c: " + c, 20, height/2);
+  if (_id != null) {
+    text("---> IN FROM @" + _id + "a: " + _a + " b: " + _b + " c: " + _c, 20, (height/2)+20);
+  }
+}
+
+void broadcastData() {  
   // -----------------------------------------
   // -------- Broadcast Data to Clients ------
   // -----------------------------------------
-
   myServer.write("server/"+ a + "/" + b + "/" + c + "#");
+}
 
-  // ----------------------------------------
-  // -------- Recive Data from Clients ------
-  // ----------------------------------------
-
+void receiveData() {
+  // -----------------------------------------
+  // -------- Receive Data from Clients ------
+  // -----------------------------------------
   myClient = myServer.available();
   String inString;
-  
+
   if (myClient != null) {
     try {
       inString = myClient.readString();
@@ -48,10 +69,6 @@ void draw() {
       println(e);
     }
   }
-
-  // Print broadcast message in the screen
-  text("Broadcasting: " + "a: " + a + " b: " + b + " c: " + c, 20, height/2);
-  text("Last Message from @" + _id + "a: " + _a + " b: " + _b + " c: " + _c, 20, (height/2)+20);
 }
 
 void keyPressed() {
